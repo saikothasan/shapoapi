@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Defines the data source and Prisma client generator.
+generator client {
+  provider        = "prisma-client-js"
+  // This is crucial for Cloudflare Workers compatibility
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db" // This is a placeholder; D1 binding is used at runtime.
+}
+
+// Maps to the Users table in D1
+model User {
+  id        String   @id
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+// Maps to the Products table in D1
+model Product {
+  id          String       @id
+  name        String
+  description String?
+  price       Float
+  stock       Int          @default(0)
+  imageUrl    String?
+  createdAt   DateTime     @default(now())
+  orderItems  OrderItem[]
+}
+
+// Maps to the Orders table in D1
+model Order {
+  id        String      @id
+  userId    String
+  status    String      @default("PENDING")
+  total     Float
+  createdAt DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     OrderItem[]
+}
+
+// Maps to the OrderItems table in D1
+model OrderItem {
+  id              String  @id
+  orderId         String
+  productId       String
+  quantity        Int
+  priceAtPurchase Float
+  order           Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product         Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
