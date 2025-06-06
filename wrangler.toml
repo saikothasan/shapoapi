@@ -1,0 +1,24 @@
+# This is the configuration file for Wrangler, the Cloudflare Workers CLI.
+name = "api"
+main = "src/index.ts"
+compatibility_date = "2024-06-05"
+node_compat = true # Required for Prisma
+
+# Environment variables for your worker.
+# It's recommended to use secrets for production.
+# Add your JWT_SECRET using `wrangler secret put JWT_SECRET`
+[vars]
+JWT_SECRET = "b4bed47170e20a0786c94a60f9be5f2ad5c692c96ea87143e00b7caeb6037dc4d37c0f6c6981bf63304c670f733a3823df0c0c79681857aabfa13bf28b2d44bef1d4200cb0f1cf6c001be94bf5662a71712a4e55f0b2df3064171362e989ca54510fb020b443b272aacc2eec3a762f4e4e9feefbdcd3fff41a4119382f6f9e0e" # CHANGE THIS IN PRODUCTION
+
+# D1 Database Binding
+# Create a D1 database with `wrangler d1 create ecommerce-db`
+# This will output the database_id and database_name to add here.
+[[d1_databases]]
+binding = "DB" # This is the name of the binding in your worker code (env.DB)
+database_name = "anxosk"
+database_id = "bb46814d-c4e9-4410-84cc-1e207a8bacda" # Replace with your actual D1 database ID
+preview_database_id = "bb46814d-c4e9-4410-84cc-1e207a8bacda" # Optional: for use with `wrangler dev`
+
+# Prisma Integration
+[prisma]
+generator = "client"
